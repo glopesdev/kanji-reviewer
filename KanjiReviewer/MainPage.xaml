@@ -12,23 +12,27 @@
             <CommandBar.Content>
                 <Grid/>
             </CommandBar.Content>
-            <AppBarButton Icon="Accept" Label="Yes"/>
-            <AppBarButton Icon="Cancel" Label="No"/>
-            <AppBarButton Icon="Favorite" Label="Easy"/>
+            <AppBarButton Name="noButton" Icon="Cancel" Label="No"/>
+            <AppBarButton Name="yesButton" Icon="Accept" Label="Yes"/>
+            <AppBarButton Name="easyButton" Icon="Favorite" Label="Easy"/>
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid x:Name="LayoutRoot" Background="WhiteSmoke">
+    <Grid Background="WhiteSmoke">
         <StackPanel>
             <TextBlock Text="KANJI REVIEWER" FontSize="30"/>
             <TextBlock Name="PageTitle" Text=""/>
         </StackPanel>
         
-        <Border BorderBrush="Black" BorderThickness="2"
+        <Border Name="kanjiBorder" BorderBrush="Black" BorderThickness="2"
                 HorizontalAlignment="Center" VerticalAlignment="Center"
                 Height="300" Margin="0,0,0,0"
                 Width="{Binding Height, RelativeSource={RelativeSource Self}}">
-            <Canvas Background="White"/>
+            <InkCanvas Name="kanjiCanvas"/>
         </Border>
+        <Viewbox Name="kanjiBox"
+                 Canvas.Left="0" Canvas.Top="0"
+                 Width="{Binding ElementName=kanjiBorder, Path=Width}"
+                 Height="{Binding ElementName=kanjiBorder, Path=Height}"/>
     </Grid>
 </Page>
