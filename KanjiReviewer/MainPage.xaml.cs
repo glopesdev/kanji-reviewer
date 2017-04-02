@@ -33,6 +33,7 @@ namespace KanjiReviewer
             this.InitializeComponent();
 
             var drawingAttributes = new InkDrawingAttributes();
+            drawingAttributes.Size = new Size(8, 8);
             drawingAttributes.Color = Colors.Black;
             drawingAttributes.IgnorePressure = true;
             drawingAttributes.FitToCurve = false;
