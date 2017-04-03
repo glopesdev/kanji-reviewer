@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,17 +33,86 @@ namespace KanjiReviewer
         public MainPage()
         {
             this.InitializeComponent();
+            LayoutProjection.RegisterPropertyChangedCallback(PlaneProjection.RotationYProperty, (sender, dp) =>
+            {
+                UpdatePageLayout();
+            });
 
             var drawingAttributes = new InkDrawingAttributes();
             drawingAttributes.Size = new Size(8, 8);
             drawingAttributes.Color = Colors.Black;
             drawingAttributes.IgnorePressure = true;
             drawingAttributes.FitToCurve = false;
-            kanjiCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
-            kanjiCanvas.InkPresenter.InputDeviceTypes =
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+            inkCanvas.InkPresenter.InputDeviceTypes =
                 CoreInputDeviceTypes.Mouse |
                 CoreInputDeviceTypes.Pen |
                 CoreInputDeviceTypes.Touch;
+        }
+
+        enum CardSide { Front, Back }
+
+        CardSide ActiveSide
+        {
+            get
+            {
+                return LayoutProjection.RotationY > 90 && LayoutProjection.RotationY < 270 ?
+                    CardSide.Back :
+                    CardSide.Front;
+            }
+        }
+
+        void ClearCanvas()
+        {
+            inkCanvas.InkPresenter.StrokeContainer.Clear();
+            kanjiCanvas.Invalidate();
+        }
+
+        void UpdatePageLayout()
+        {
+            kanjiCanvas.Invalidate();
+            if (ActiveSide == CardSide.Back)
+            {
+                // Show backside
+                LayoutTransform.ScaleX = -1;
+                kanjiBox.Visibility = Visibility.Visible;
+                inkCanvas.Visibility = Visibility.Collapsed;
+                if (kanjiBox.Child != null)
+                {
+                    noButton.IsEnabled = true;
+                    yesButton.IsEnabled = true;
+                    easyButton.IsEnabled = true;
+                }
+            }
+            else
+            {
+                // Show frontside
+                LayoutTransform.ScaleX = 1;
+                kanjiBox.Visibility = Visibility.Collapsed;
+                inkCanvas.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void flipButton_Click(object sender, RoutedEventArgs e)
+        {
+            FlipAnimation.To = ActiveSide == CardSide.Front ? 180 : 360;
+            FlipStoryboard.Begin();
+        }
+
+        private void FlipStoryboard_Completed(object sender, object e)
+        {
+            if (LayoutProjection.RotationY == 360)
+            {
+                LayoutProjection.RotationY = 0;
+            }
+        }
+
+        private void kanjiCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            if (ActiveSide == CardSide.Front)
+            {
+                args.DrawingSession.DrawInk(inkCanvas.InkPresenter.StrokeContainer.GetStrokes());
+            }
         }
     }
 }
