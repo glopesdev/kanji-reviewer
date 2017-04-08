@@ -18,10 +18,11 @@
             <AppBarButton Name="easyButton" Icon="Favorite" Label="Easy"/>
             <AppBarSeparator/>
             <AppBarButton Name="flipButton" Icon="Refresh" Label="Flip" Click="flipButton_Click"/>
+            <AppBarButton Name="clearButton" Icon="Clear" Label="Clear" Click="clearButton_Click"/>
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid Background="WhiteSmoke" DoubleTapped="flipButton_Click">
+    <Grid Background="WhiteSmoke" DoubleTapped="flipButton_Click" RightTapped="clearButton_Click">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="2*"/>

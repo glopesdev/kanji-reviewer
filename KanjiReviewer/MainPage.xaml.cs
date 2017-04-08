@@ -99,6 +99,11 @@ namespace KanjiReviewer
             FlipStoryboard.Begin();
         }
 
+        private void clearButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+        }
+
         private void FlipStoryboard_Completed(object sender, object e)
         {
             if (LayoutProjection.RotationY == 360)
