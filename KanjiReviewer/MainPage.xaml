@@ -27,11 +27,13 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Row="0">
-            <TextBlock Text="KANJI REVIEWER" FontSize="30"/>
-            <TextBlock Name="PageTitle" Text=""/>
-        </StackPanel>
+
+        <Viewbox Stretch="Uniform" HorizontalAlignment="Left">
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="KANJI REVIEWER" FontSize="10"/>
+                <TextBlock Name="PageTitle" Text=""/>
+            </StackPanel>
+        </Viewbox>
 
         <Border Grid.Row="1" SizeChanged="kanjiBorder_SizeChanged"
                 Name="kanjiBorder" BorderBrush="Black" BorderThickness="2"
