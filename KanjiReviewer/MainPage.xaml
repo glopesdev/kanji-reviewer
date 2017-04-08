@@ -22,24 +22,29 @@
     </Page.BottomAppBar>
 
     <Grid Background="WhiteSmoke" DoubleTapped="flipButton_Click">
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0">
             <TextBlock Text="KANJI REVIEWER" FontSize="30"/>
             <TextBlock Name="PageTitle" Text=""/>
         </StackPanel>
 
-        <Border Name="kanjiBorder" BorderBrush="Black" BorderThickness="2"
-                HorizontalAlignment="Center" VerticalAlignment="Center"
-                Height="300" Margin="0,0,0,0"
-                Width="{Binding Height, RelativeSource={RelativeSource Self}}">
+        <Border Grid.Row="1" SizeChanged="kanjiBorder_SizeChanged"
+                Name="kanjiBorder" BorderBrush="Black" BorderThickness="2"
+                HorizontalAlignment="Center" VerticalAlignment="Stretch">
             <Border.Projection>
                 <PlaneProjection x:Name="LayoutProjection"/>
             </Border.Projection>
             <Border.Resources>
                 <Storyboard x:Name="FlipStoryboard" Completed="FlipStoryboard_Completed">
                     <DoubleAnimation x:Name="FlipAnimation"
-                                     Storyboard.TargetName="LayoutProjection"
-                                     Storyboard.TargetProperty="RotationY"
-                                     Duration="0:0:0.3"/>
+                                        Storyboard.TargetName="LayoutProjection"
+                                        Storyboard.TargetProperty="RotationY"
+                                        Duration="0:0:0.3"/>
                 </Storyboard>
             </Border.Resources>
             <Grid RenderTransformOrigin="0.5,0.5">

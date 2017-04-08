@@ -114,5 +114,10 @@ namespace KanjiReviewer
                 args.DrawingSession.DrawInk(inkCanvas.InkPresenter.StrokeContainer.GetStrokes());
             }
         }
+
+        private void kanjiBorder_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            kanjiBorder.Width = kanjiBorder.ActualHeight;
+        }
     }
 }
