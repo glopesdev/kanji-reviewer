@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -7,9 +8,9 @@ namespace KanjiReviewer
 {
     static class ControlObservable
     {
-        public static IObservable<EventArgs> FromClick(AppBarButton button)
+        public static IObservable<EventPattern<RoutedEventArgs>> FromClick(AppBarButton button)
         {
-            return Observable.FromEvent<RoutedEventHandler, EventArgs>(
+            return Observable.FromEventPattern<RoutedEventHandler, RoutedEventArgs>(
                 handler => button.Click += handler,
                 handler => button.Click -= handler);
         }
