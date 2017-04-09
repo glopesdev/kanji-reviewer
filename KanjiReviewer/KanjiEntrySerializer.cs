@@ -13,8 +13,8 @@ namespace KanjiReviewer
             entry.Compartment = reader.ReadInt32();
             entry.PassedCount = reader.ReadInt32();
             entry.FailedCount = reader.ReadInt32();
-            entry.LastReview = DateTimeOffset.FromFileTime(reader.ReadInt64());
-            entry.NextReview = DateTimeOffset.FromFileTime(reader.ReadInt64());
+            entry.LastReview = DateTime.FromFileTime(reader.ReadInt64());
+            entry.NextReview = DateTime.FromFileTime(reader.ReadInt64());
             return entry;
         }
 

@@ -18,7 +18,7 @@ namespace KanjiReviewer
 
         public static void Review(this KanjiEntry entry, ReviewResult result)
         {
-            var reviewDate = DateTimeOffset.Now;
+            var reviewDate = DateTime.UtcNow;
             switch (result)
             {
                 case ReviewResult.Yes:

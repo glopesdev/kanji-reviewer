@@ -8,7 +8,7 @@ namespace KanjiReviewer
         {
         }
 
-        public KanjiEntry(string meaning, string strokeSource, DateTimeOffset nextReview)
+        public KanjiEntry(string meaning, string strokeSource, DateTime nextReview)
         {
             Meaning = meaning;
             StrokeSource = strokeSource;
@@ -26,8 +26,8 @@ namespace KanjiReviewer
 
         public int FailedCount { get; set; }
 
-        public DateTimeOffset LastReview { get; set; }
+        public DateTime LastReview { get; set; }
 
-        public DateTimeOffset NextReview { get; set; }
+        public DateTime NextReview { get; set; }
     }
 }
