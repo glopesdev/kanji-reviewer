@@ -5,28 +5,22 @@ namespace KanjiReviewer
 {
     static class KanjiEntrySerializer
     {
-        public static KanjiEntry Read(BinaryReader reader)
+        public static void Read(BinaryReader reader, KanjiEntry entry)
         {
-            var entry = new KanjiEntry();
-            entry.Meaning = reader.ReadString();
-            entry.StrokeSource = reader.ReadString();
             entry.Compartment = reader.ReadInt32();
             entry.PassedCount = reader.ReadInt32();
             entry.FailedCount = reader.ReadInt32();
-            entry.LastReview = DateTime.FromFileTime(reader.ReadInt64());
-            entry.NextReview = DateTime.FromFileTime(reader.ReadInt64());
-            return entry;
+            entry.LastReview = DateTime.FromBinary(reader.ReadInt64());
+            entry.NextReview = DateTime.FromBinary(reader.ReadInt64());
         }
 
         public static void Write(BinaryWriter writer, KanjiEntry entry)
         {
-            writer.Write(entry.Meaning);
-            writer.Write(entry.StrokeSource);
             writer.Write(entry.Compartment);
             writer.Write(entry.PassedCount);
             writer.Write(entry.FailedCount);
-            writer.Write(entry.LastReview.ToFileTime());
-            writer.Write(entry.NextReview.ToFileTime());
+            writer.Write(entry.LastReview.ToBinary());
+            writer.Write(entry.NextReview.ToBinary());
         }
     }
 }
