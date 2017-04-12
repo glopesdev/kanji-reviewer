@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -30,6 +33,9 @@ namespace KanjiReviewer
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        Settings settings;
+        KanjiEntry currentEntry;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -48,6 +54,13 @@ namespace KanjiReviewer
                 CoreInputDeviceTypes.Mouse |
                 CoreInputDeviceTypes.Pen |
                 CoreInputDeviceTypes.Touch;
+
+            InitializeSettings();
+        }
+
+        private void ApplicationData_DataChanged(ApplicationData sender, object args)
+        {
+            settings.Read(sender.RoamingFolder);
         }
 
         enum CardSide { Front, Back }
@@ -91,6 +104,59 @@ namespace KanjiReviewer
                 kanjiBox.Visibility = Visibility.Collapsed;
                 inkCanvas.Visibility = Visibility.Visible;
             }
+        }
+
+        async void InitializeSettings()
+        {
+            settings = await Settings.Create();
+            ApplicationData.Current.DataChanged += ApplicationData_DataChanged;
+            ApplicationData.Current.SignalDataChanged();
+
+            var noClick = ControlObservable.FromClick(noButton, ReviewResult.No);
+            var yesClick = ControlObservable.FromClick(yesButton, ReviewResult.Yes);
+            var easyClick = ControlObservable.FromClick(easyButton, ReviewResult.Easy);
+
+            var now = DateTime.UtcNow;
+            var start = Observable.Return(ReviewResult.No);
+            var review = noClick.Amb(yesClick).Amb(easyClick)
+                                .Do(result => currentEntry.Review(result))
+                                .Do(result => settings.Write(ApplicationData.Current.RoamingFolder))
+                                .Take(1).Repeat();
+            review = start.Concat(review);
+
+            var expiredKanji = from entry in settings.Database.Take(settings.FrameNumber)
+                               where now > entry.NextReview
+                               orderby KanjiController.Random.Next()
+                               select entry;
+            var kanjiReview = expiredKanji.Concat(Enumerable.Repeat<KanjiEntry>(null, 1));
+            var transition = review.Zip(kanjiReview, (result, entry) => entry);
+            transition.Subscribe(entry => LoadKanji(entry));
+        }
+
+        async void LoadKanji(KanjiEntry entry)
+        {
+            if (entry == null)
+            {
+                PageTitle.Text = " ";
+                kanjiBox.Child = null;
+            }
+            else
+            {
+                PageTitle.Text = entry.Meaning;
+                var path = System.IO.Path.Combine("Assets\\Kanji", entry.StrokeSource);
+                var strokeFile = await Package.Current.InstalledLocation.GetFileAsync(path);
+                var xaml = await FileIO.ReadTextAsync(strokeFile);
+                var content = (UIElement)XamlReader.Load(xaml);
+                kanjiBox.Child = content;
+                currentEntry = entry;
+            }
+
+            noButton.IsEnabled = false;
+            yesButton.IsEnabled = false;
+            easyButton.IsEnabled = false;
+            LayoutProjection.RotationY = 0;
+            UpdatePageLayout();
+            ClearCanvas();
         }
 
         private void flipButton_Click(object sender, RoutedEventArgs e)
