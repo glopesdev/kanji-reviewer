@@ -24,10 +24,12 @@ namespace KanjiReviewer
                 case ReviewResult.Yes:
                 case ReviewResult.Easy:
                     entry.Compartment++;
+                    entry.PassedCount++;
                     break;
                 default:
                 case ReviewResult.No:
                     entry.Compartment = 0;
+                    entry.FailedCount++;
                     break;
             }
 
